@@ -1,0 +1,30 @@
+# action.yml
+name: 'Test a device snap'
+description: 'Test a device snap'
+inputs:
+  edgex_device_snap:
+    description: "edgex_device_snap"
+    required: true  
+  edgex_service_name:
+    description: "edgex_service_name"
+    required: true  
+  edgex_device_name:
+    description: "edgex_device_name"
+    required: true  
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: |
+        sudo snap install --edge edgexfoundry
+        sudo snap install --dangerous *.snap
+        sudo snap start ${{inputs.edgex_device_snap}}.${{inputs.edgex_service_name}}
+        sleep 30
+        echo "curl http://localhost:48082/api/v1/device/name/${{inputs.edgex_device_name}}"
+        if curl -s http://localhost:48082/api/v1/device/name/${{inputs.edgex_device_name}} | grep -q "${{inputs.edgex_device_name}}"; then
+          echo ok
+        else
+          echo "::error ::device test failed"
+          exit 1
+        fi
+      shell: bash
