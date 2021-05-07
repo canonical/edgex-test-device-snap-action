@@ -16,7 +16,7 @@ runs:
   steps:
     - name: Install dependencies
       run: |
-        sudo snap install --edge edgexfoundry
+        sudo snap install edgexfoundry
         sudo snap install --dangerous *.snap
         sudo snap start ${{inputs.edgex_device_snap}}.${{inputs.edgex_service_name}}
         sleep 30
